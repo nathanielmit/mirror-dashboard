@@ -67,7 +67,7 @@ echo "default source is now: $(pactl get-default-source)"
 # sticks across reboots without any extra config file.
 
 say "Restarting the kiosk browser so it re-enumerates audio devices"
-pkill -f "app=http://localhost:3000" || true
+pkill -f "app=http://127.0.0.1:3000" || true
 echo "The kiosk supervisor relaunches Chromium within ~15s."
 
 say "Done"

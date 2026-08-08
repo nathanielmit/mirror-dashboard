@@ -66,7 +66,7 @@ Then confirm the kiosk healed itself end to end:
 ```bash
 systemctl is-active mirror-web            # active
 pgrep -af 'chrome .*--kiosk' | head -1    # relaunched by kiosk.sh
-curl -sf localhost:3000/api/health        # heartbeat flowing
+curl -sf 127.0.0.1:3000/api/health        # heartbeat flowing
 ```
 
 ## Test 3 — force a full fsck and prove it can't prompt

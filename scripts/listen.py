@@ -37,7 +37,7 @@ import wave
 
 HOME = os.path.expanduser("~")
 SHARE = os.path.join(HOME, ".local/share/mirror-voice")
-MIRROR_URL = os.environ.get("MIRROR_URL", "http://localhost:3000")
+MIRROR_URL = os.environ.get("MIRROR_URL", "http://127.0.0.1:3000")
 # The mic's node name embeds its card profile, and the profile is not ours to
 # control — an ALSA card-profile change renamed this device's source from
 # ...mono-fallback to ...analog-mono, which would have pinned us to a node that

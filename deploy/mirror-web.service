@@ -7,7 +7,16 @@ Type=simple
 User=nathaniel
 WorkingDirectory=/home/nathaniel/mirror-dashboard
 # Production server (run `npm run build` first; see deploy notes).
-ExecStart=/usr/bin/npm run start
+#
+# Bound to loopback on purpose. Next binds every interface by default, which
+# put an unauthenticated /api/voice -- it spawns the logged-in `claude` CLI --
+# on the LAN for anything on the wifi to POST at. Only Chromium on this box
+# ever loads the page, so nothing needs to reach it from off-machine.
+#
+# 127.0.0.1, not "localhost": glibc resolves localhost to ::1 first here, so a
+# v4-only bind would leave every local client waiting on a refused v6 connect
+# before falling back. The consumers all use the literal address to match.
+ExecStart=/usr/bin/npm run start -- -H 127.0.0.1
 Restart=always
 RestartSec=3
 Environment=NODE_ENV=production

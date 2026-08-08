@@ -8,7 +8,7 @@ Wants=pipewire.service wireplumber.service
 
 [Service]
 Type=simple
-Environment=MIRROR_URL=http://localhost:3000
+Environment=MIRROR_URL=http://127.0.0.1:3000
 Environment=PYTHONUNBUFFERED=1
 # Speech volume, 0-1. Piper renders near full scale while Spotify arrives
 # pre-attenuated by librespot, so speech needs scaling down to share a sink

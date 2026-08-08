@@ -28,7 +28,7 @@ power on  →  GRUB  →  systemd (multi-user.target)
              │                               ├─ xset s off -dpms        (never blank)
              │                               ├─ unclutter               (hide cursor)
              │                               └─ exec scripts/kiosk.sh
-             │                                    └─ chromium --kiosk --app=localhost:3000
+             │                                    └─ chromium --kiosk --app=127.0.0.1:3000
              └─ GRUB_TIMEOUT=0, GRUB_RECORDFAIL_TIMEOUT=3
                 so an unclean shutdown costs 3s at the menu, not 30
 ```

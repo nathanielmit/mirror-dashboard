@@ -5,7 +5,9 @@
 # renderer). Launched from the Openbox autostart; runs in the X session.
 set -u
 
-URL="http://localhost:3000"
+# Literal v4 address: the server is bound to 127.0.0.1, and "localhost"
+# resolves to ::1 first on this box.
+URL="http://127.0.0.1:3000"
 HB_MAX_AGE=60000   # ms: relaunch if the page heartbeat is older than this
 CHROME="$(command -v chromium-browser || command -v chromium || echo /snap/bin/chromium)"
 CHROME_PID=0
