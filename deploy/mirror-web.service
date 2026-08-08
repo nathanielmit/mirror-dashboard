@@ -1,0 +1,16 @@
+[Unit]
+Description=Mirror Next.js dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=nathaniel
+WorkingDirectory=/home/nathaniel/mirror-dashboard
+# Production server (run `npm run build` first; see deploy notes).
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=3
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

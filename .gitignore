@@ -1,0 +1,12 @@
+node_modules/
+.next/
+# transient last-good cache, regenerated at runtime
+data/cache/
+# compiled python from the voice daemon
+__pycache__/
+*.pyc
+# env files (you'll add .env.local yourself for Phase 2)
+.env*.local
+# dropped anime clips (large / not ours to commit) — keep the README
+public/anime/*
+!public/anime/README.txt

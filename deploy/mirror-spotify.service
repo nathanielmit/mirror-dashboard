@@ -1,0 +1,31 @@
+[Unit]
+# Turns the mirror into a Spotify Connect speaker called "Mirror".
+# A *user* unit: it needs the user's PipeWire session, same as mirror-voice.
+Description=Mirror Spotify Connect endpoint (librespot)
+After=pipewire.service wireplumber.service network-online.target
+Wants=pipewire.service wireplumber.service
+
+[Service]
+Type=simple
+# librespot is built with no audio backend compiled in (that would have meant
+# apt-installing -dev headers as root). The pipe backend emits raw PCM on
+# stdout instead, and pw-play puts it on the same sink the voice daemon uses.
+# librespot's pipe output is fixed at 44.1kHz stereo signed 16-bit LE.
+ExecStart=/bin/sh -c '%h/.cargo/bin/librespot \
+  --name "Mirror" \
+  --bitrate 320 \
+  --cache %h/.local/share/mirror-dashboard/librespot-cache \
+  --backend pipe \
+  --initial-volume 70 \
+  | PIPEWIRE_PROPS="{ node.name = spotify-music }" \
+    pw-play --raw --rate 44100 --channels 2 --format s16 -'
+# The node.name above only labels the stream so it is identifiable in
+# `wpctl status` / `pw-dump` output. Do NOT drive volume through it: this
+# pw-play blocks reading librespot's pipe while playback is stopped and cannot
+# answer control calls, so set-volume hangs. Ducking goes via the Spotify API.
+Restart=always
+RestartSec=5
+Nice=0
+
+[Install]
+WantedBy=default.target

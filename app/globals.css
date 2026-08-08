@@ -1,0 +1,92 @@
+:root { --fg:#e8e8ea; --dim:#7d7d86; --accent:#5b8dff; --warn:#ffb454; --ok:#5ddc9a; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { background:#000; color:var(--fg); font-family: 'Inter', system-ui, -apple-system, sans-serif; overflow:hidden; height:100%; }
+body { -webkit-font-smoothing:antialiased; }
+.wrap { height:100vh; width:100vw; padding:48px 40px 250px; display:flex; flex-direction:column; gap:34px; }
+.row { display:flex; justify-content:space-between; align-items:flex-start; gap:30px; }
+.col { display:flex; flex-direction:column; gap:10px; }
+.card { background:transparent; }
+.h { font-size:15px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); margin-bottom:14px; font-weight:600; }
+.clock { font-size:118px; font-weight:200; line-height:0.95; letter-spacing:-2px; }
+.date { font-size:26px; color:var(--dim); font-weight:300; margin-top:6px; }
+/* Weather: scaled down — it's glanceable, it doesn't need to dominate. */
+.temp { font-size:46px; font-weight:200; line-height:1; }
+.wmeta { font-size:15px; color:var(--dim); font-weight:300; }
+.fc { display:flex; gap:16px; margin-top:6px; }
+.fc div { text-align:center; }
+.fc .d { font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; }
+.fc .t { font-size:15px; font-weight:300; margin-top:3px; }
+/* Hacker News: also reduced, to make room for the scrolling feed. */
+.news li { list-style:none; font-size:14px; font-weight:300; padding:5px 0; line-height:1.3; border-bottom:1px solid rgba(255,255,255,0.06); }
+.news li span { color:var(--dim); font-size:11px; margin-right:7px; }
+.todo li { list-style:none; font-size:21px; font-weight:300; padding:9px 0; line-height:1.35; border-bottom:1px solid rgba(255,255,255,0.06); }
+.todo .m { color:var(--accent); font-size:15px; font-weight:500; margin-right:12px; font-variant-numeric:tabular-nums; }
+.todo .done { color:var(--dim); text-decoration:line-through; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:48px; flex:1; min-height:0; }
+/* Calendar | Hacker News | scrolling feed. The feed gets the extra width
+   because it carries a summary line under every headline. */
+.grid3 { display:grid; grid-template-columns:1fr 0.9fr 1.35fr; gap:36px; flex:1; min-height:0; }
+.panel { overflow:hidden; min-height:0; }
+
+/* --- scrolling tech/anime/gaming feed --- */
+.feed { height:100%; display:flex; flex-direction:column; min-height:0; }
+.feed-empty { font-size:15px; color:var(--dim); font-weight:300; }
+/* The mask fades items in and out at the edges so headlines don't get
+   guillotined mid-line at the top and bottom of the window. */
+.feed-view { position:relative; flex:1; min-height:0; overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+  mask-image:linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%); }
+.feed-scroll { position:absolute; top:0; left:0; right:0;
+  animation-name:feedscroll; animation-timing-function:linear; animation-iteration-count:infinite; }
+@keyframes feedscroll { from { transform:translateY(0); } to { transform:translateY(-50%); } }
+.fitem { padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+.fmeta { display:flex; align-items:baseline; gap:8px; margin-bottom:3px; }
+.fcat { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; font-weight:600; }
+.fcat-tech { color:var(--accent); }
+.fcat-anime { color:#c78bff; }
+.fcat-gaming { color:var(--ok); }
+.fsrc { font-size:10px; color:var(--dim); letter-spacing:0.5px; }
+.ftitle { font-size:15px; font-weight:400; line-height:1.3; }
+.fdesc { font-size:12.5px; color:var(--dim); font-weight:300; line-height:1.35; margin-top:3px; }
+/* Now playing — a quiet line above the voice dot, hidden when stopped. */
+.nowplaying { position:fixed; bottom:88px; left:50%; transform:translateX(-50%); z-index:3;
+  display:flex; align-items:baseline; gap:10px; max-width:46vw;
+  font-size:14px; font-weight:300; color:var(--dim); opacity:0.85; }
+.np-note { color:var(--ok); font-size:13px; }
+.np-title { color:var(--fg); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.np-artist { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.voice { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:8px; max-width:80%; }
+.vdot { width:14px; height:14px; border-radius:50%; background:#333; transition:all .25s; }
+.vdot.listening { background:var(--ok); box-shadow:0 0 16px var(--ok); }
+.vdot.active { background:var(--accent); box-shadow:0 0 20px var(--accent); transform:scale(1.3); }
+.vtext { font-size:18px; color:var(--dim); text-align:center; font-weight:300; min-height:24px; }
+/* Pixel face — lives inside the middle column, under the Hacker News list.
+   Laid out in flow rather than pinned to viewport coordinates, so it stays put
+   relative to the headlines instead of needing re-measuring when the grid
+   changes. max-width keeps it inside the column on a narrow panel. */
+.panel-mid { display:flex; flex-direction:column; }
+.face { display:block; margin:30px auto 0; max-width:100%; height:auto;
+  pointer-events:none; opacity:0.92; }
+
+/* Last phrase understood — small, bottom-left, under the animation zone.
+   Clamped to two lines so a long sentence can't climb into the artwork.
+   Press "d" to hide it. */
+.heard { position:fixed; left:40px; bottom:24px; max-width:38vw; z-index:4;
+  font-size:14px; font-weight:300; line-height:1.35; color:var(--dim); opacity:0.8;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.spacer { flex:1; }
+.cal li { list-style:none; font-size:20px; font-weight:300; padding:8px 0; line-height:1.3; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:baseline; }
+.cal .cday { color:var(--accent); font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:1px; width:96px; flex:none; }
+.cal .ctime { color:var(--dim); font-size:15px; width:84px; flex:none; font-variant-numeric:tabular-nums; }
+.cal .cwhat { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* Two decoration zones, bottom corners. Fixed rather than in flow so they
+   can't push the panels around as clips of different sizes swap in.
+   .wrap reserves the space via its bottom padding. */
+.anime { position:fixed; bottom:56px; pointer-events:none; z-index:2; }
+.anime-left { left:40px; }
+.anime-right { right:40px; }
+.anime-frame { opacity:0; transition:opacity .5s ease; line-height:0; }
+.anime-frame.show { opacity:1; }
+.anime-frame img, .anime-frame video { max-height:200px; max-width:30vw; object-fit:contain; filter:drop-shadow(0 0 26px rgba(255,255,255,0.10)); }
+.anime-tag { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--dim);
+  opacity:0.5; margin-top:6px; }

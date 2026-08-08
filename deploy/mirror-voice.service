@@ -1,0 +1,28 @@
+[Unit]
+# Local speech loop: mic -> whisper -> wake check -> Claude -> piper.
+# A *user* unit, not a system one: it needs the user's PipeWire session, and
+# lingering is already enabled so it starts at boot without a login.
+Description=Mirror local voice daemon
+After=pipewire.service wireplumber.service
+Wants=pipewire.service wireplumber.service
+
+[Service]
+Type=simple
+Environment=MIRROR_URL=http://localhost:3000
+Environment=PYTHONUNBUFFERED=1
+# Speech volume, 0-1. Piper renders near full scale while Spotify arrives
+# pre-attenuated by librespot, so speech needs scaling down to share a sink
+# with music. Raise toward 1.0 if replies are too quiet; drop toward 0.1 if
+# they still startle. Takes effect on: systemctl --user restart mirror-voice
+Environment=MIRROR_TTS_GAIN=0.14
+# Keep whisper off every core — the mirror still has a browser to render.
+Environment=OMP_NUM_THREADS=6
+ExecStart=%h/.local/share/mirror-voice/venv/bin/python %h/mirror-dashboard/scripts/listen.py
+Restart=always
+RestartSec=5
+# Model load is a few seconds; don't let a slow start look like a failure.
+TimeoutStartSec=120
+Nice=5
+
+[Install]
+WantedBy=default.target
